@@ -9,10 +9,6 @@ struct Util;
 
 impl Util {
 
-    fn funcion_ejemplo() {
-        println!("Esta es la función de ejemplo situada en el fichero lib.rs. Esto es lo único que hace");
-    }
-
     fn visuales() -> egui::Visuals {
         let mut visual = egui::Visuals::dark();
         visual.panel_fill = egui::Color32::from_rgb(32, 33, 36);
