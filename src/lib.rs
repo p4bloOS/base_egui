@@ -21,16 +21,10 @@ impl Util {
 
         let mut fonts = egui::FontDefinitions::default();
         // Instalamos nuestra propia fuente (.ttf and .otf files supported)
-        fonts.font_data.insert(
-            "fuente_1".to_owned(),
-            egui::FontData::from_static(include_bytes!(
-                "../assets/Cantarell-VF.otf"
-        )),);
-        fonts.font_data.insert(
-            "fuente_2".to_owned(),
-            egui::FontData::from_static(include_bytes!(
-                "../assets/DroidSansMono-enMp.ttf" //
-        )),);
+        fonts.font_data.insert("fuente_1".to_owned(),
+            egui::FontData::from_static(include_bytes!("../assets/Cantarell-VF.otf")),);
+        fonts.font_data.insert("fuente_2".to_owned(),
+            egui::FontData::from_static(include_bytes!("../assets/DroidSansMono-enMp.ttf")),);
         // Damos la máxima prioridad a nuestra fuente_1 para el texto "Proportional":
         fonts
             .families
@@ -45,21 +39,32 @@ impl Util {
             .insert(0, "fuente_2".to_owned());
         cc.egui_ctx.set_fonts(fonts);
 
-        // println!("Píxeles por punto: {}", cc.egui_ctx.pixels_per_point());
+        // Obtención de un tamaño de letra que tiene en cuenta la resolución del monitor
+        let pixeles_fuente;
+        #[cfg(target_arch = "wasm32")]
+        {
+        pixeles_fuente = 14.0; // Tamaño de letra en versión web (provisional)
+        }
+        #[cfg(not(target_arch = "wasm32"))]
+        {
+        let resolucion = cc.integration_info.window_info.monitor_size.unwrap();
+        println!("Resolución de monitor: {}x{}", resolucion[0], resolucion[1]);
+        let pixeles_fuente_con_monitor_1080 = 12.0;
+        let pixeles_monitor = resolucion[0]*resolucion[1];
+        pixeles_fuente = (
+            pixeles_fuente_con_monitor_1080/(1920.0*1080.0))*pixeles_monitor;
+        }
+    
         let mut style = (*cc.egui_ctx.style()).clone();
         let fuente = egui::FontFamily::Proportional;
         style.text_styles = [
-            (egui::style::TextStyle::Heading, egui::FontId::new(16.0, fuente.clone())),
-            (egui::style::TextStyle::Body, egui::FontId::new(16.0, fuente.clone())),
-            (egui::style::TextStyle::Monospace, egui::FontId::new(16.0, fuente.clone())),
-            (egui::style::TextStyle::Button, egui::FontId::new(16.0, fuente.clone())),
-            (egui::style::TextStyle::Small, egui::FontId::new(16.0, fuente)),
+            (egui::style::TextStyle::Heading, egui::FontId::new(pixeles_fuente, fuente.clone())),
+            (egui::style::TextStyle::Body, egui::FontId::new(pixeles_fuente, fuente.clone())),
+            (egui::style::TextStyle::Monospace, egui::FontId::new(pixeles_fuente, fuente.clone())),
+            (egui::style::TextStyle::Button, egui::FontId::new(pixeles_fuente, fuente.clone())),
+            (egui::style::TextStyle::Small, egui::FontId::new(pixeles_fuente, fuente)),
         ].into();
         cc.egui_ctx.set_style(style);
     }
 
 }
-
-
-
-
