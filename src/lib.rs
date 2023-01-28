@@ -16,6 +16,29 @@ impl Util {
         //visual.override_text_color = Some(egui::Color32::WHITE);
         visual
     }
+
+    fn tamano_fuente_adecuado(_cc: &eframe::CreationContext<'_>) -> f32 {
+        // Obtención de un tamaño de letra que tiene en cuenta la resolución del monitor
+        let pixeles_fuente;
+        #[cfg(target_arch = "wasm32")]
+        {
+        pixeles_fuente = 20.0; // Tamaño de letra en versión web (provisional)
+                            // Los píxeles no parecen igual de grandes que en nativo
+        }
+        #[cfg(not(target_arch = "wasm32"))]
+        {
+        let resolucion = _cc.integration_info.window_info.monitor_size.unwrap();
+        //let resolucion = [1024.0, 768.0];
+        println!("Resolución de monitor: {}x{}", resolucion[0], resolucion[1]);
+        let pixeles_fuente_con_monitor_1080 = 12.0;
+        let diagonal_monitor = ((resolucion[0] as f32).powi(2)  + (resolucion[1] as f32).powi(2)).sqrt();
+        let diagonal_monitor_1080 = ((1920 as f32).powi(2)  + (1080 as f32).powi(2)).sqrt();
+        pixeles_fuente = (
+            pixeles_fuente_con_monitor_1080 / diagonal_monitor_1080) * diagonal_monitor;
+        println!("Tamaño de fuente en píxeles: {}", pixeles_fuente);
+        }
+        pixeles_fuente
+    }
     
     fn cambiar_estilo_texto(cc: &eframe::CreationContext<'_>) {
 
@@ -39,24 +62,9 @@ impl Util {
             .insert(0, "fuente_2".to_owned());
         cc.egui_ctx.set_fonts(fonts);
 
-        // Obtención de un tamaño de letra que tiene en cuenta la resolución del monitor
-        let pixeles_fuente;
-        #[cfg(target_arch = "wasm32")]
-        {
-        pixeles_fuente = 14.0; // Tamaño de letra en versión web (provisional)
-        }
-        #[cfg(not(target_arch = "wasm32"))]
-        {
-        let resolucion = cc.integration_info.window_info.monitor_size.unwrap();
-        println!("Resolución de monitor: {}x{}", resolucion[0], resolucion[1]);
-        let pixeles_fuente_con_monitor_1080 = 12.0;
-        let pixeles_monitor = resolucion[0]*resolucion[1];
-        pixeles_fuente = (
-            pixeles_fuente_con_monitor_1080/(1920.0*1080.0))*pixeles_monitor;
-        }
-    
         let mut style = (*cc.egui_ctx.style()).clone();
         let fuente = egui::FontFamily::Proportional;
+        let pixeles_fuente = Self::tamano_fuente_adecuado(cc);
         style.text_styles = [
             (egui::style::TextStyle::Heading, egui::FontId::new(pixeles_fuente, fuente.clone())),
             (egui::style::TextStyle::Body, egui::FontId::new(pixeles_fuente, fuente.clone())),
