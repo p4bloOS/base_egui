@@ -9,7 +9,7 @@ En realidad, solo es una pequeña modificación de la plantilla original, pensan
 Instrucciones de compilación:
 
     $ cd base_gui/
-    $ cargo run --release
+    $ cargo build --release
     # compilación cruzada para windows: # $ cargo build --target x86_64-pc-windows-gnu --release
  
 *Primero deben instalarse las dependencias. En linux (debian):
