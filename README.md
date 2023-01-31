@@ -1,27 +1,39 @@
-IGU multiplataforma hecha en Rust
+------------------------------------------------------------------------------
+ base_egui. Una aplicación multiplataforma con interfaz gráfica hecha en Rust
+ ----------------------------------------------------------------------------
 
-Usando la plantilla de eframe y la biblioteca egui.
+Basada en la plantilla eframe (https://github.com/emilk/eframe_template.git) con la biblioteca egui (https://github.com/emilk/egui.git).
 
-Esta aplicación puede ejecutarse tanto en nativo como en un navegador web.
+Lista para poder ejecutarse tanto en nativo, en diferentes arquitecturas, como en un navegador web.
 
-En realidad, solo es una pequeña modificación de la plantilla original, pensando en que este proyecto se use también como plantilla para futuros programas. Se ha reestructurado parte del código, añadiendo fuentes tipográficas, modificando la apariencia gráfica, cambiando la interfaz resultante y recomentando el código en español.
+Preparada para compilarse en cualquier parte mediante un contenedor docker.
 
-Instrucciones de compilación:
+Pensada como una base para otras futuras aplicaciones.
 
-    $ cd base_gui/
-    $ cargo build --release
-    # compilación cruzada para windows: # $ cargo build --target x86_64-pc-windows-gnu --release
+Programada en puro Rust.
+
+
+
+INSTRUCCIONES DE COMPILACIÓN:
+
+    Como único requisito debemos tener instalado docker (y git si queremos clonar este repositorio). Nos situaremos en el directorio "compilacion/" y ejecutaremos el script "compilar_con_docker.sh". Esto creará un contenedor que generará los ejecutables "base_egui_linux_x86" y "base_egui_windows_x86.exe" en el directorio "compilacion/", así como los archivos de la versión web en el directorio "compilacion/version_web/". La primera vez que se haga, el proceso podrá tardar varios minutos. En un futuro se podría ampliar fácilmente este proyecto para compilar a otras arquitecturas diferentes.
+
+    $ git clone https://github.com/p4bloOS/base_egui.git
+    $ cd base_egui/compilacion
+    $ sudo sh compilar_con_docker.sh
  
-*Primero deben instalarse las dependencias. En linux (debian):
-    
-    $ sudo apt-get install libxcb-render0-dev libxcb-shape0-dev libxcb-xfixes0-dev libspeechd-dev libxkbcommon-dev libssl-dev 
 
-Para compilar a WASM (versión web):
+INSTRUCCIONES PARA ARRANCAR SERVIDOR WEB:
 
-    $ trunk serve # para compilar y arrancar un servidor que escucha en http://127.0.0.1:8080
-    $ trunk build --release # para generar los archivos de la aplicación web en el directorio /dist
+    Como único requisito debemos tener instalado docker (y git si queremos clonar este repositorio). Nos situaremos en el directorio "servidor_web/" y ejecutaremos el script "arrancar_servidor_con_docker.sh". Esto creará un contenedor donde se ejecutará el servidor, que escuchará en el puerto 8080 de nuestro sistema (dicho puerto se puede cambiar fácilmente editando el script "arrancar_servidor_con_docker.sh").
 
-*Primero debería instalarse trunk con:
+    $ git clone https://github.com/p4bloOS/base_egui.git
+    $ cd base_egui/servidor_web
+    $ sudo sh arrancar_servidor_con_docker.sh
 
-    $ cargo install --locked trunk
-    $ y también el target para WASM con: $rustup target add wasm32-unknown-unknown
+
+
+OTRAS CUESTIONES:
+
+    - Como novedad sobre la plantilla eframe se ha implementado una característica que establece un tamaño de fuente apropiado según la resolución del monitor donde se ejecute la aplicación.
+    - Es posible compilar el proyecto y ejecutar el servicio web sin usar docker, pero es un proceso laborioso y puede crear algunos problemas.

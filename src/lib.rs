@@ -19,25 +19,34 @@ impl Util {
 
     fn tamano_fuente_adecuado(_cc: &eframe::CreationContext<'_>) -> f32 {
         // Obtención de un tamaño de letra que tiene en cuenta la resolución del monitor
-        let pixeles_fuente;
+        let puntos_fuente;
+        
         #[cfg(target_arch = "wasm32")]
         {
-        pixeles_fuente = 20.0; // Tamaño de letra en versión web (provisional)
-                            // Los píxeles no parecen igual de grandes que en nativo
+        puntos_fuente = 20.0; // Tamaño de letra en versión web (provisional)
+                            // Los puntos no parecen igual de grandes que en nativo
         }
+
         #[cfg(not(target_arch = "wasm32"))]
         {
         let resolucion = _cc.integration_info.window_info.monitor_size.unwrap();
         //let resolucion = [1024.0, 768.0];
-        println!("Resolución de monitor: {}x{}", resolucion[0], resolucion[1]);
-        let pixeles_fuente_con_monitor_1080 = 12.0;
+        let pixeles_por_punto = _cc.integration_info.native_pixels_per_point.unwrap();
+        let pixeles_fuente_con_monitor_1080 = 20.0;
         let diagonal_monitor = ((resolucion[0] as f32).powi(2)  + (resolucion[1] as f32).powi(2)).sqrt();
         let diagonal_monitor_1080 = ((1920 as f32).powi(2)  + (1080 as f32).powi(2)).sqrt();
-        pixeles_fuente = (
+        let pixeles_fuente = (
             pixeles_fuente_con_monitor_1080 / diagonal_monitor_1080) * diagonal_monitor;
+        puntos_fuente = pixeles_fuente / pixeles_por_punto;
+
+        println!("Resolución de monitor: {}x{}", resolucion[0], resolucion[1]);
+        println!("Píxeles por punto de forma nativa: {}", pixeles_por_punto);
+        println!("Diagonal del monitor en píxeles: {}", diagonal_monitor);
         println!("Tamaño de fuente en píxeles: {}", pixeles_fuente);
+        println!("Tamaño de fuente en puntos: {}", puntos_fuente);
         }
-        pixeles_fuente
+
+        puntos_fuente
     }
     
     fn cambiar_estilo_texto(cc: &eframe::CreationContext<'_>) {
@@ -64,13 +73,14 @@ impl Util {
 
         let mut style = (*cc.egui_ctx.style()).clone();
         let fuente = egui::FontFamily::Proportional;
-        let pixeles_fuente = Self::tamano_fuente_adecuado(cc);
+        let puntos_fuente = Self::tamano_fuente_adecuado(cc);
+
         style.text_styles = [
-            (egui::style::TextStyle::Heading, egui::FontId::new(pixeles_fuente, fuente.clone())),
-            (egui::style::TextStyle::Body, egui::FontId::new(pixeles_fuente, fuente.clone())),
-            (egui::style::TextStyle::Monospace, egui::FontId::new(pixeles_fuente, fuente.clone())),
-            (egui::style::TextStyle::Button, egui::FontId::new(pixeles_fuente, fuente.clone())),
-            (egui::style::TextStyle::Small, egui::FontId::new(pixeles_fuente, fuente)),
+            (egui::style::TextStyle::Heading, egui::FontId::new(puntos_fuente, fuente.clone())),
+            (egui::style::TextStyle::Body, egui::FontId::new(puntos_fuente, fuente.clone())),
+            (egui::style::TextStyle::Monospace, egui::FontId::new(puntos_fuente, fuente.clone())),
+            (egui::style::TextStyle::Button, egui::FontId::new(puntos_fuente, fuente.clone())),
+            (egui::style::TextStyle::Small, egui::FontId::new(puntos_fuente, fuente)),
         ].into();
         cc.egui_ctx.set_style(style);
     }
