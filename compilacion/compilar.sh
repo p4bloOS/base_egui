@@ -7,5 +7,6 @@ cargo build --target x86_64-pc-windows-gnu --release
 cp target/x86_64-pc-windows-gnu/release/base_egui.exe compilacion/base_egui_windows_x86.exe
 echo "-----------------Compilado para Windows"
 trunk build --release
+rm -r compilacion/version_web/ --force
 cp -r dist/ compilacion/version_web/
 echo "-----------------Compilado para web. Proceso finalizado."
