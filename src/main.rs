@@ -1,8 +1,6 @@
 #![warn(clippy::all, rust_2018_idioms)]
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")] // Esconde la ventana de consola en Windows en release
 
-use std::env;
-
 
 // Cuando se compila en nativo:
 #[cfg(not(target_arch = "wasm32"))]
@@ -15,7 +13,7 @@ fn main() {
         "Mi primera IGU en Rust",
         native_options,
         Box::new(|cc| Box::new(base_egui::TemplateApp::new(cc))),
-    );
+    ).unwrap();
 }
 
 // Cuando se compila para web usando trunk.
